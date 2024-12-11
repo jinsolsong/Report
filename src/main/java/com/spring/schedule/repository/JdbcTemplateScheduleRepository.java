@@ -35,10 +35,12 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
     public ScheduleResponseDto saveSchedule(Schedule schedule) {
 
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
+
         jdbcInsert.withTableName("schedule").usingGeneratedKeyColumns("id");
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String now = LocalDateTime.now().format(dateTimeFormatter);
+
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("todo", schedule.getTodo());
         parameters.put("name", schedule.getName());
@@ -50,7 +52,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
 
 
-        return new ScheduleResponseDto(key.longValue(), schedule.getTodo(), schedule.getName(),now,now);
+        return new ScheduleResponseDto(key.longValue(), schedule.getTodo(), schedule.getName(), now, now);
     }
 
     @Override
@@ -76,17 +78,16 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
     }
 
     @Override
-    public int updateSchedule(Long id, String todo, String name) {
+    public int updateSchedule(Long id, String todo, String name, String updateDate) {
 
-        return jdbcTemplate.update("update schedule set todo = ?, name = ? where id = ?", todo, name, id);
+        return jdbcTemplate.update("update schedule set todo = ?, name = ?, updateDate = ? where id = ?", todo, name, updateDate, id);
     }
 
     @Override
-    public int updateName(Long id, String name) {
+    public int updateName(Long id, String name, String updateDate) {
 
 
-
-        return jdbcTemplate.update("update schedule set name = ? where id = ?", name, id);
+        return jdbcTemplate.update("update schedule set name = ?, updateDate = ? where id = ?", name, updateDate, id);
     }
 
     @Override
@@ -96,7 +97,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
 
     }
 
-    private RowMapper<ScheduleResponseDto> scheduleRowMapper(){
+    private RowMapper<ScheduleResponseDto> scheduleRowMapper() {
         return new RowMapper<ScheduleResponseDto>() {
             @Override
             public ScheduleResponseDto mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -112,7 +113,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
         };
     }
 
-    private RowMapper<Schedule> scheduleRowMapperV2(){
+    private RowMapper<Schedule> scheduleRowMapperV2() {
         return new RowMapper<Schedule>() {
             @Override
             public Schedule mapRow(ResultSet rs, int rowNum) throws SQLException {

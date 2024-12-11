@@ -17,7 +17,7 @@ public class Schedule {
     private String createDate;
     private String updateDate;
 
-    public Schedule(String todo, String name, String password){
+    public Schedule(String todo, String name, String password) {
         this.todo = todo;
         this.name = name;
         this.password = password;

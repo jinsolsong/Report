@@ -23,6 +23,7 @@ public class ScheduleResponseDto {
         this.createDate = schedule.getCreateDate();
         this.updateDate = schedule.getUpdateDate();
 
-
     }
+
+
 }

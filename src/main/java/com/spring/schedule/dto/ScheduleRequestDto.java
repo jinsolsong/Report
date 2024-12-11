@@ -9,6 +9,7 @@ public class ScheduleRequestDto {
     private String todo;
     private String name;
     private String password;
+    private String updateDate;
 
 
 }

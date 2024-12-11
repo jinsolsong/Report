@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
-public class ScheduleServiceImpl implements ScheduleService{
+public class ScheduleServiceImpl implements ScheduleService {
 
 
     private final ScheduleRepository scheduleRepository;
@@ -48,63 +48,58 @@ public class ScheduleServiceImpl implements ScheduleService{
 
         Schedule schedule = scheduleRepository.findScheduleByNameOrElseThrow(id);
 
-
         return new ScheduleResponseDto(schedule);
     }
 
     @Transactional
     @Override
-    public ScheduleResponseDto updateSchedule(Long id, String todo, String name, String password) {
+    public ScheduleResponseDto updateSchedule(Long id, String todo, String name, String password, String updateDate) {
 
-        if(todo == null || name == null || password == null){
+        if (todo == null || name == null || password == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The todo, password and name are required values.");
         }
 
-        int updatedRow = scheduleRepository.updateSchedule(id, todo, name);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String now = LocalDateTime.now().format(dateTimeFormatter);
 
-        if(updatedRow == 0){
+        int updatedRow = scheduleRepository.updateSchedule(id, todo, name, now);
+
+        if (updatedRow == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
         }
 
 
         Schedule schedule = scheduleRepository.findScheduleByNameOrElseThrow(id);
 
-        if(!schedule.getPassword().equals(password)){
+        if (!schedule.getPassword().equals(password)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password");
         }
-
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String now = LocalDateTime.now().format(dateTimeFormatter);
-
-        schedule.setUpdateDate(now);
 
         return new ScheduleResponseDto(schedule);
     }
 
     @Transactional
     @Override
-    public ScheduleResponseDto updateName(Long id, String todo, String name, String password) {
+    public ScheduleResponseDto updateName(Long id, String todo, String name, String password, String updateDate) {
 
-        if(todo != null || name == null || password==null){
+        if (todo != null || name == null || password == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The todo, password and name are required values.");
-        }
-
-        int updateRow = scheduleRepository.updateName(id, name);
-
-        if(updateRow == 0){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
-        }
-
-        Schedule schedule = scheduleRepository.findScheduleByNameOrElseThrow(id);
-
-        if(!schedule.getPassword().equals(password)){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password");
         }
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String now = LocalDateTime.now().format(dateTimeFormatter);
 
-        schedule.setUpdateDate(now);
+        int updateRow = scheduleRepository.updateName(id, name, now); // 수정 now <<
+
+        if (updateRow == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
+        }
+
+        Schedule schedule = scheduleRepository.findScheduleByNameOrElseThrow(id);
+
+        if (!schedule.getPassword().equals(password)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password");
+        }
 
 
         return new ScheduleResponseDto(schedule);
@@ -112,15 +107,28 @@ public class ScheduleServiceImpl implements ScheduleService{
     }
 
     @Override
-    public void deleteSchedule(Long id) {
+    public ScheduleResponseDto deleteSchedule(Long id, String password) {
+
+        if (password == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The password required values.");
+        }
+
+        Schedule schedule = scheduleRepository.findScheduleByNameOrElseThrow(id);
+
+        if (!schedule.getPassword().equals(password)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password");
+        }
+
+        //DB에서 저장된 비밀번호조회
+        //가져온거랑 입력값 비교 다르면 예외 같으면 실행 출력
 
         int deleteRow = scheduleRepository.deleteSchedule(id);
 
-        if(deleteRow == 0){
+        if (deleteRow == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
+
         }
-
+        return null;
     }
-
 
 }

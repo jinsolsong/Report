@@ -32,13 +32,13 @@ public class ScheduleController {
     }
 
     @GetMapping
-    public List<ScheduleResponseDto> findAllSchedule(){
+    public List<ScheduleResponseDto> findAllSchedule() {
 
         return scheduleService.findAllSchedules();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ScheduleResponseDto> findScheduleById(@PathVariable Long id){
+    public ResponseEntity<ScheduleResponseDto> findScheduleById(@PathVariable Long id) {
 
         return new ResponseEntity<>(scheduleService.findScheduleById(id), HttpStatus.OK);
     }
@@ -48,26 +48,28 @@ public class ScheduleController {
     public ResponseEntity<ScheduleResponseDto> updateSchedule(
             @PathVariable Long id,
             @RequestBody ScheduleRequestDto dto
-    ){
+    ) {
 
-        return new ResponseEntity<>(scheduleService.updateSchedule(id, dto.getTodo(), dto.getName(), dto.getPassword()), HttpStatus.OK);
+        return new ResponseEntity<>(scheduleService.updateSchedule(id, dto.getTodo(), dto.getName(), dto.getPassword(), dto.getUpdateDate()), HttpStatus.OK);
 
     }
 
     @PatchMapping("/{id}")
-    public  ResponseEntity<ScheduleResponseDto> updateName(
+    public ResponseEntity<ScheduleResponseDto> updateName(
             @PathVariable Long id,
             @RequestBody ScheduleRequestDto dto
-    ){
+    ) {
 
-        return new ResponseEntity<>(scheduleService.updateName(id, dto.getTodo(), dto.getName(), dto.getPassword()), HttpStatus.OK);
+        return new ResponseEntity<>(scheduleService.updateName(id, dto.getTodo(), dto.getName(), dto.getPassword(), dto.getUpdateDate()), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id){
-        scheduleService.deleteSchedule(id);
+    public ResponseEntity<ScheduleResponseDto> deleteSchedule(
+            @PathVariable Long id,
+            @RequestBody ScheduleRequestDto dto
+    ) {
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(scheduleService.deleteSchedule(id, dto.getPassword()), HttpStatus.OK);
     }
 
 

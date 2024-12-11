@@ -13,11 +13,11 @@ public interface ScheduleService {
 
     ScheduleResponseDto findScheduleById(Long id);
 
-    ScheduleResponseDto updateSchedule(Long id, String todo, String name, String password);
+    ScheduleResponseDto updateSchedule(Long id, String todo, String name, String password, String updateDate);
 
-    ScheduleResponseDto updateName(Long id, String todo, String name, String password);
+    ScheduleResponseDto updateName(Long id, String todo, String name, String password, String updateDate);
 
-    void deleteSchedule(Long id);
+    ScheduleResponseDto deleteSchedule(Long id, String password);
 
 
 }
